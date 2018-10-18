@@ -29,7 +29,7 @@ function invokeRendererFunc({ winId, id, name, args }) {
       }
       invokes[id] = { callback, errCallback }
       win.webContents.send('rendererInvoke', { id, name, args })
-      console.log({ name, id, args }, 'sent')
+      // console.log({ name, id, args }, 'sent')
     } else {
       reject({ message: 'no window', code: 'NO_WINDOW_FOUND' })
     }
@@ -39,7 +39,7 @@ ipcRenderer && ipcRenderer.on('rendererInvoke', (event, data) => {
   let { id, name, args } = data
   if (registedFuncs[name]) {
     let ret
-    console.log('invoking', name, ...args)
+    // console.log('invoking', name, ...args)
     if (args) {
       ret = registedFuncs[name](...args)
     } else {
@@ -47,16 +47,18 @@ ipcRenderer && ipcRenderer.on('rendererInvoke', (event, data) => {
     }
     if (Object.prototype.toString.call(ret) === '[object Promise]') {
       ret.then(res => {
-        console.log('sending rendererCallback', res)
+        // console.log('sending rendererCallback', res)
         event.sender.send('rendererCallback', { id, 'args': res, code: 'success' })
       }).catch(err => {
+        // console.log('sending rendererCallback error', err)
         event.sender.send('rendererCallback', { id, 'error': err, code: 'error' })
       })
     } else {
       event.sender.send('rendererCallback', { id, 'args': ret, code: 'success' })
     }
   } else {
-    event.sender.send('rendererCallback', { id, 'error': { message: 'renderer function not found', code: 'WIN_NOT_FOUND' }, code: 'error' })
+    // console.log('function not found for', data)
+    event.sender.send('rendererCallback', { id, 'error': { message: `renderer function ${name} not found`, code: 'FUNCTION_NOT_FOUND' }, code: 'error' })
   }
 })
 ipcMain && ipcMain.on('rendererCallback', (event, data) => {

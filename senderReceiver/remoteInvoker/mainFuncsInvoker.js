@@ -27,7 +27,7 @@ function invokeMainFunc({ id, name, args }) {
       }
       invokes[id] = { callback, errCallback }
       ipcRenderer.send('remoteInvoke', { name, id, args })
-      console.log({ name, id, args, callback }, 'sent')
+      // console.log({ name, id, args, callback }, 'sent')
     } else {
       reject({ message: 'no ipcRenderer', code: 'NO_IPCRENDERER' })
     }
@@ -51,7 +51,7 @@ ipcRenderer && ipcRenderer.on('remoteCallback', (event, data) => {
   }
 })
 ipcMain && ipcMain.on('remoteInvoke', (event, data) => {
-  console.log('got remoteinvoke', data, registedFuncs)
+  // console.log('got remoteinvoke', data, registedFuncs)
   if (!registedFuncs[data.name]) {
     event.sender.send('remoteCallback', { id: data['id'], 'error': 'remote function not found', code: 'error' })
     return
@@ -63,7 +63,7 @@ ipcMain && ipcMain.on('remoteInvoke', (event, data) => {
     } else {
       ret = registedFuncs[data.name]()
     }
-    console.log('invoke ret', ret)
+    // console.log('invoke ret', ret)
 
     if (Object.prototype.toString.call(ret) === '[object Promise]') {
       ret.then(res => {

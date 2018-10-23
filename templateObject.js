@@ -19,4 +19,4 @@ function findPath(path,kvs){
     }
     return null
 }
-export {create}
+export {createFromTemplate}

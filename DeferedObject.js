@@ -32,15 +32,12 @@ function deffered(context,name,initFunc){
     Object.defineProperty(context,name,property)
     id++
     requestIdleCallback(async function(){
-        console.log('in idle')
         if(!invokes[curId]){
             if(Object.prototype.toString.call(initFunc)==='[object Promise]'){
-                console.log('in promise idle callback')
                 value=await initFunc
                 invokes[curId]=true
             }
             else{
-                console.log('in function idle callback')
                 value=initFunc()
                 invokes[curId]=true
             }

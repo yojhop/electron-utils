@@ -18,11 +18,27 @@ function deletePath(obj,path){
     let objKVs=object2KVs(obj)
     let len=objKVs.length
     while(len--){
-        if(path===objKVs[len].path){
+        if(path===objKVs[len].path||objKVs[len].path.startsWith(`${path}.`)){
             objKVs.splice(len,1)
             break
         }
     }
+    let parts=path.split('.')
+    if(parts.length>1){
+        let prevPath=parts.slice(0,parts.length-1).join('.')
+        let found=false
+        for(let kv of objKVs){
+            if(kv.path.startsWith(prevPath)){
+                found=true
+                break
+            }
+        }
+        if(!found){
+            objKVs.push({path:prevPath,value:{}})
+        }
+    }
+    // let parts=path.split('.')
+    // if
     console.log(objKVs)
     return KVs2Object(objKVs)
 }

@@ -42,15 +42,30 @@ function deletePath(obj,path){
     console.log(objKVs)
     return KVs2Object(objKVs)
 }
-function executeCommand(command){
-    let [func,...params]=command.split(' ')
+// function executeCommand(obj,command){
+//     let [func,...params]=command.split(' ')
+//     debugger
+//     const args=[]
+//     for(let param of params){
+//         args.push(JSON.parse(param))
+//     }
+//     this[func](this,...args)
+//     // console.log(this[func],args)
+// }
+let funcs=this;
+Object.prototype.migrate=function (command){
     debugger
+    let [func,...params]=command.split(' ')
+    // debugger
     const args=[]
     for(let param of params){
         args.push(JSON.parse(param))
     }
-    console.log(this[func],args)
-}
+    return funcs[func](this,...args)
+    // console.log(this[func],args)
+};
+// let obj={a:1}
+// obj=obj.migrate('deletePath "a"')
 function movePath(obj,oriPath,newPath,defaultVal=null){
     let val=defaultVal
     let objKVs=object2KVs(obj)

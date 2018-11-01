@@ -1,8 +1,8 @@
-const toString=Object.prototype.toString
+const objType=Object.prototype.toString
 
 function simpleEquals(value1,value2){
-    let type1=toString.call(value1)
-    let type2=toString.call(value2)
+    let type1=objType.call(value1)
+    let type2=objType.call(value2)
     if(type1!==type2) return false
     switch(type1){
         case '[object Function]':
@@ -46,3 +46,4 @@ function arrayEquals(arr1,arr2){
     }
     return true
 }
+export {simpleEquals,objType}

@@ -1,44 +1,58 @@
-function registerAll(context,links){
-    let linksLen=links.length
-    const allNames=[]
-    while(linksLen--){
-        let link=links[linksLen]
-        // let prevStates=link.prevStates
-        addStates(link.prevStates,allNames)
-        let events=link.events
-        let eventLen=events.length
-        while(eventLen--){
-            let triggerName=events[eventLen].trigger.name
-            if(!allNames.includes(triggerName)){
-                allNames.push(triggerName)
+import {simpleEquals} from './ObjectUtils'
+import {deepCopy} from './copy'
+class StateMachine{
+    constructor(context,links){
+        this.links=links
+        this.allNames=[]
+        this.context=context
+        this.valsMap=deepCopy(context)
+        links.forEach(link=>{
+            this.addStates(link.prevStates)
+            link.events.forEach(event=>{
+                this.addStates(event.nextStates)
+            })
+        })
+        this.allNames.forEach(name=>{
+            Object.defineProperty(this.context,name,{
+                get:()=>{
+                    return this.valsMap[name]
+                },
+                set:(newV)=>{
+                    let oldV=this.valsMap[name]
+                    this.valsMap[name]=newV
+                    this.stateChanged(oldV,name)
+                }
+            })
+        })
+    }
+    stateChanged(oldV,name){
+        let cyMap=deepCopy(this.valsMap)
+        for(let link of this.links){
+            cyMap[name]=oldV
+            if(this.statesMatch(link.prevStates,cyMap)){
+                cyMap[name]=this.valsMap[name]
+                for(let event of link.events){
+                    if(this.statesMatch(event.nextStates,cyMap)){
+                        event.cb&&event.cb(cyMap)
+                    }
+                }
             }
-            addStates(events[eventLen].nextStates,allNames)
         }
     }
-    let valsMap={}
-    allVals.forEach(name=>{
-        Object.defineProperty(context,name,{
-            get:()=>{
-                return valsMap[name]
-            },
-            set:(newV)=>{
-                let oldV=valsMap[name]
-                valsMap[name]=newV
-                stateChanged(newV,oldV,name,links)
+    addStates(states){
+        for(let name in states){
+            if(!this.allNames.includes(name)){
+                this.allNames.push(name)
             }
-        })
-    })
-}
-function stateChanged(newV,oldV,name,links){
-
-}
-function addStates(states,vals){
-    let statesLen=states.length
-    while(statesLen--){
-        let name=states[statesLen].name
-        if(!vals.includes(name)){
-            vals.push(name)
         }
+    }
+    statesMatch(states,map){
+        for(let name in states){
+            if(!simpleEquals(states[name],map[name])){
+                return false
+            }
+        }
+        return true
     }
 }
 class StateLink{
@@ -48,24 +62,9 @@ class StateLink{
     }
 }
 class Event{
-    constructor(trigger,nextStates){
-        this.trigger=trigger
+    constructor(cb,nextStates){
+        this.cb=cb
         this.nextStates=nextStates
     }
 }
-class State{
-    constructor(name,value){
-        this.name=name
-        this.value=value
-    }
-}
-class Trigger{
-    constructor(stateName,func,output){
-        this.stateName=stateName
-        this.func=func
-        this.output=output
-    }
-    trigger(val){
-        return this.func(val)===output
-    }
-}
+export {StateMachine,StateLink,Event}

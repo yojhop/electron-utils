@@ -48,6 +48,9 @@ class StateMachine{
     }
     statesMatch(states,map){
         for(let name in states){
+            if(states[name] instanceof AnyState){
+                continue
+            }
             if(!simpleEquals(states[name],map[name])){
                 return false
             }
@@ -67,4 +70,5 @@ class Event{
         this.nextStates=nextStates
     }
 }
-export {StateMachine,StateLink,Event}
+class AnyState{}
+export {StateMachine,StateLink,Event,AnyState}

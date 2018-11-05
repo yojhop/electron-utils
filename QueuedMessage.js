@@ -24,6 +24,10 @@ class QueuedMessage {
       // console.log('handle queue', this.queue)
       if (this.queue.length > 0) {
         this.lastHandled = this.getTimestamp()
+        const typeOf=Object.prototype.toString
+        if(typeOf.call(this.handler)==='[object Promise]'){
+          this.handler(this.queue)
+        }
         this.handler(this.queue)
         this.queue = []
       }

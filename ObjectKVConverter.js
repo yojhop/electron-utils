@@ -16,6 +16,7 @@ function KVs2Object(kvs){
     }
     return obj
 }
+
 function walkPath(obj,parts,value){
     let cur=obj
     for(let i=0;i<parts.length;i++){
@@ -55,13 +56,18 @@ function walkObject(obj){
     let kvs=[]
     if(toString.call(obj)==='[object Object]'){
          for(let key of Object.keys(obj)){
+            let isLeaf=false
             for(let path of walkObject(obj[key])){
                 if(path.path){
                     kvs.push({path:`${key}.${path.path}`,value:path.value})
                 }
                 else{
+                    isLeaf=true
                     kvs.push({path:key,value:path.value})
                 }
+            }
+            if(!isLeaf){
+                kvs.push({path:key,value:obj[key]})
             }
          }
     }else if(toString.call(obj)==='[object Array]'){

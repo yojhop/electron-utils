@@ -11,7 +11,7 @@ function stepTimer(util,cb,minDiff=10000,level=10){
         setTimeout(()=>{stepTimer(util,cb,minDiff,level)},diff)
     }
 }
-function interval(func,timeout,cb,errCb){
+function interval(func,timeout,cb,errCb,checker){
     const toString=Object.prototype.toString
     if(toString.call(func)==='[object Promise]'){
         func.then(res=>{
@@ -19,15 +19,21 @@ function interval(func,timeout,cb,errCb){
         }).catch(err=>{
             errCb&&errCb(err)
         }).then(()=>{
-            setTimeout(()=>{
-                interval(func,timeout,cb)
-            },timeout)
+            const nextCall=checker?checker():true
+            if(nextCall){
+                setTimeout(()=>{
+                    interval(func,timeout,cb)
+                },timeout)
+            }
         })
     }
     else if(toString.call(func)==='[object Function]'){
         cb&&cb(func())
-        setTimeout(()=>{
-            interval(func,timeout,cb)
-        },timeout)
+        const nextCall=checker?checker():true
+        if(nextCall){
+            setTimeout(()=>{
+                interval(func,timeout,cb)
+            },timeout)
+        }
     }
 }

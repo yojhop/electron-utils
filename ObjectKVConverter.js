@@ -23,6 +23,7 @@ function walkPath(obj,parts,value){
         const index=indexKey(parts[i])
         let ind
         index>=0?ind=index:ind=parts[i]
+        
         if(!cur[ind]){
             let leftParts=parts.slice(i+1)
             if(leftParts.length>0){
@@ -35,6 +36,11 @@ function walkPath(obj,parts,value){
                 }
             }
             else{
+                cur[ind]=value
+            }
+        }
+        else{
+            if(i===parts.length-1){
                 cur[ind]=value
             }
         }

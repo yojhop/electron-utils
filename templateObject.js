@@ -1,19 +1,21 @@
 import {object2KVs,KVs2Object} from './ObjectKVConverter'
-
+const objTypeOf=Object.prototype.toString
 function createFromTemplate(obj,template){
     let tmpKVs=object2KVs(template).reverse()
     let objKVs=object2KVs(obj).reverse()
-    for(let oKV of objKVs){
-        let kv=findPath(oKV.path,tmpKVs)
+    for(let tKV of tmpKVs){
+        let kv=findPath(tKV.path,objKVs)
         if(kv){
-            console.log('found')
-            kv.value=oKV.value
+            if(objTypeOf.call(kv.value)!==objTypeOf.call(tKV.value)){
+                kv.value=tKV.value
+            }
         }
         else{
-            tmpKVs.push(oKV)
-		}
+            objKVs.push(tKV)
+        }
     }
-    return KVs2Object(tmpKVs)
+    console.log(objKVs)
+    return KVs2Object(objKVs)
 }
 function findPath(path,kvs){
     for(let kv of kvs){

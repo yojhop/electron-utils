@@ -61,7 +61,7 @@ function indexKey(key){
 function walkObject(obj){
     let kvs=[]
     if(toString.call(obj)==='[object Object]'){
-         for(let key of Object.keys(obj)){
+        for(let key of Object.keys(obj)){
             let isLeaf=false
             for(let path of walkObject(obj[key])){
                 if(path.path){

@@ -6,7 +6,7 @@ function createFromTemplate(obj,template){
     for(let tKV of tmpKVs){
         let kv=findPath(tKV.path,objKVs)
         if(kv){
-            if(objTypeOf.call(kv.value)!==objTypeOf.call(tKV.value)){
+            if(tKV.value !== null && typeof tKV.value !== 'undefined' && objTypeOf.call(kv.value)!==objTypeOf.call(tKV.value)){
                 kv.value=tKV.value
             }
         }
@@ -14,7 +14,6 @@ function createFromTemplate(obj,template){
             objKVs.push(tKV)
         }
     }
-    console.log(objKVs)
     return KVs2Object(objKVs)
 }
 function findPath(path,kvs){

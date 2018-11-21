@@ -8,6 +8,7 @@ function object2KVs(obj){
 }
 function KVs2Object(kvs){
     let obj={}
+    filtParentNodes(kvs)
     for(let path of kvs){
         if(hasOwn.call(path,'path')&&hasOwn.call(path,'value')){
             let parts=path.path.split('.')
@@ -16,7 +17,20 @@ function KVs2Object(kvs){
     }
     return obj
 }
-
+function filtParentNodes(kvs){
+    const toRemove=[]
+    let len =kvs.length
+    while(len--){
+        for(let kv of kvs){
+            if(kv.path.startsWith(kvs[len].path+'.')){
+                toRemove.push(len)
+            }
+        }
+    }
+    for(let item of toRemove){
+        kvs.splice(item,1)
+    }
+}
 function walkPath(obj,parts,value){
     let cur=obj
     for(let i=0;i<parts.length;i++){

@@ -1,5 +1,7 @@
 import {simpleEquals} from './ObjectUtils'
 import {deepCopy} from './copy'
+
+
 class StateMachine{
     constructor(context,links){
         this.links=links

@@ -136,4 +136,4 @@ if (ipcRenderer) {
     }
   })
 }
-export { setValue, getValue }
+export { setValue, getValue,observeValue }

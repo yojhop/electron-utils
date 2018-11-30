@@ -18,7 +18,9 @@ class ObjectProxy{
                 if(!(name in target)){
                     console.log('defining',proto,name)
                     Object.defineProperty(proto,name,{set:(val)=>{
+                        if(name in target){
                         console.log('setting',name,val)
+                        }
                     }})
                 }
                 target[name] = value;

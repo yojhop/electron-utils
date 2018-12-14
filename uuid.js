@@ -21,4 +21,13 @@ if (remote) {
     return obj
   })()
 }
-export { guid }
+let puid= (function() {
+  let obj = {}
+  obj.cnt = -1
+  obj.uid = () => {
+    obj.cnt++
+    return obj.cnt
+  }
+  return obj
+})()
+export { guid,puid }

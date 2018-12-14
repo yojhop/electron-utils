@@ -1,6 +1,6 @@
 import { registerInMain, invokeMainFunc } from './mainFuncsInvoker'
 import { registerInRenderer, invokeRendererFunc } from './rendererFuncsInvoker'
-import { guid } from './uuid'
+import { guid } from '../../uuid'
 let target
 function setTarget(t) {
   target = t

@@ -1,4 +1,5 @@
 import {simpleEquals} from './ObjectUtils'
+import {puid} from './uuid'
 const kvsMap={}
 const onceObservers=[]
 const observers=[]
@@ -14,7 +15,7 @@ function update(key,value){
     kvsMap[key]=value
 }
 function needCallback(observer,key,value){
-    if(observer.checker&&observer.checker(value)){
+    if(observer.checker){
         if(observer.checker(value)){
         observer.callback(value)
         return true
@@ -34,12 +35,24 @@ function observe({checker,key,callback}){
         }
     }
 }
-function once({checker,key,callback}){
+function once({checker,key,callback,timeout}){
     if(checker&&(key in kvsMap)){
         if(checker(kvsMap[key])){
             callback(kvsMap[key])
-            return
+            return null
         }
     }
-    onceObservers.push({checker,key,callback})
+    let id=puid.uid()
+    onceObservers.push({id,checker,key,callback})
+    if(timeout){
+        setTimeout(()=>{
+            let len=onceObservers.length
+            while(len--){
+                if(onceObservers[len].id===id){
+                    onceObservers.splice(len,1)
+                    break
+                }
+            }
+        },timeout)
+    }
 }

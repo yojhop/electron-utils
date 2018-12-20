@@ -22,6 +22,29 @@ function simpleEquals(value1,value2){
 function functionEquals(f1,f2){
     return f1.toString()===f2.toString()
 }
+function modifyPaths(obj,paths){
+    for(let path of paths){
+        if(path.path&&objType.call(path.path)==='[object String]'){
+            let parts=path.path.split('.')
+            let cur=obj
+            for(let i=0;i<parts.length;i++){
+                if(i===parts.length-1){
+                    cur[parts[i]]=path.value
+                }
+                else{
+                    cur=obj[parts[i]]
+                    if(typeof cur==='undefined'){
+                        cur={}
+                        obj[parts[i]]=cur
+                    }
+                    else if(objType.call(cur)!=='[object Object]'){
+                        break
+                    }
+                }
+            }
+        }
+    }
+}
 function objectEquals(obj1,obj2){
     let keys1=Object.keys(obj1)
     let keys2=Object.keys(obj2)

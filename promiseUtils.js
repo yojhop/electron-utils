@@ -18,6 +18,32 @@ export function tryAll(promises) {
     walkFn(0)
   })
 }
+export function tryPromise({fn,maxTry,interval}){
+  return new Promise((resolve,reject)=>{
+      fn().then(res=>{
+        resolve(res)
+      }).catch(err=>{
+        if(typeof maxTry==='number'){
+          maxTry--
+          if(maxTry>0){
+            if(interval) setTimeout(()=>{
+              tryPromise({fn,maxTry,interval}).then(res=>{
+                resolve(res)
+              }).catch(err=>{
+                reject(err)
+              })
+            },interval)
+          }
+          else{
+            reject(err)
+          }
+        }
+        else{
+          reject(err)
+        }
+      })
+  })
+}
 export function retryableAll(promises,maxTry){
     const succs = []
   const fails = []

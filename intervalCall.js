@@ -8,9 +8,6 @@ function intervalCall(cb, interval, ...args) {
     let callItem = cacheCalls[i]
     if (callItem.cb === cb) {
       callItem.valid = false
-      try {
-        clearTimeout(callItem.timeoutId)
-      } catch (e) {}
       let newCallItem = { cb, interval, args, valid: true }
       callsMap[id] = newCallItem
       cacheCalls.splice(i, 1, newCallItem)
@@ -37,12 +34,11 @@ function cancelInterval(id) {
   }
 }
 function startCallLoop(callItem) {
+  if(!callItem.valid) return
   let ret = callItem.cb(...callItem.args)
   if (Object.prototype.toString.call(ret) === '[object Promise]') {
     ret.catch(() => {}).then(() => {
-      if (!callItem.valid) {
-        return
-      }
+      if (!callItem.valid) return
       callItem.lastCall = new Date().getTime()
       callItem.timeoutId = setTimeout(() => {
         startCallLoop(callItem)

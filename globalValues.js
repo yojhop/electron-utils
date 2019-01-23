@@ -2,8 +2,8 @@
  * @Author: OBKoro1
  * @Github: https://github.com/OBKoro1
  * @Date: 2018-11-21 11:43:59
- * @LastEditors: OBKoro1
- * @LastEditTime: 2018-11-22 15:55:57
+ * @LastEditors: Amos
+ * @LastEditTime: 2019-01-10 16:12:11
  * @Description: 设置全局变量/获取全局变量,在设置完成之后做些事情
  * @export: 设置全局变量和获取全局变量
  */
@@ -21,6 +21,20 @@ function setValue(key, value) {
         resolve()
       }
       ipcRenderer.send('setGlobalValue', { key, value, winId, id })
+    } else {
+      reject('set function can only be invoked in renderer process')
+    }
+  })
+}
+function delaySetValue(key,value,delay){
+  return new Promise((resolve, reject) => {
+    if (ipcRenderer) {
+      let winId = remote.getCurrentWindow().id
+      const id = guid.uuid()
+      rendererInvokes[id] = () => {
+        resolve()
+      }
+      ipcRenderer.send('delaySetGlobalValue', { key, value, winId, id, delay })
     } else {
       reject('set function can only be invoked in renderer process')
     }
@@ -62,6 +76,20 @@ if (ipcMain) {
     data.val = data.key in kvsMap ? kvsMap[data.key] : null
     cb(data)
   })
+  ipcMain.on('delaySetGlobalValue', (e, data) => {
+    let { key, value,delay } = data
+    let cb = ({ winId, id,timeoutId }) => {
+      let win = BrowserWindow.fromId(winId)
+      if (win) {
+        win.webContents.send('delaySetGlobalValueDone', id)
+      }
+    }
+    let timeoutId=setTimeout(()=>{
+      kvsMap[key] = value
+    },delay)
+    data.timeoutId=timeoutId
+    cb(data)
+  })
 }
 if (ipcRenderer) {
   ipcRenderer.on('setGlobalValueDone', (e, id) => {
@@ -75,4 +103,4 @@ if (ipcRenderer) {
     }
   })
 }
-export { setValue, getValue }
+export { setValue, getValue, delaySetValue }

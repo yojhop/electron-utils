@@ -1,1 +1,110 @@
-[]
+[
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 37,
+    "rawcode": 75,
+    "type": "keydown"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 37,
+    "rawcode": 75,
+    "type": "keyup"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 32,
+    "rawcode": 68,
+    "type": "keydown"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 32,
+    "rawcode": 68,
+    "type": "keyup"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 38,
+    "rawcode": 76,
+    "type": "keydown"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 38,
+    "rawcode": 76,
+    "type": "keyup"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 38,
+    "rawcode": 76,
+    "type": "keydown"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 38,
+    "rawcode": 76,
+    "type": "keyup"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 36,
+    "rawcode": 74,
+    "type": "keydown"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 36,
+    "rawcode": 74,
+    "type": "keyup"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 50,
+    "rawcode": 77,
+    "type": "keydown"
+  },
+  {
+    "shiftKey": false,
+    "altKey": false,
+    "ctrlKey": false,
+    "metaKey": false,
+    "keycode": 50,
+    "rawcode": 77,
+    "type": "keyup"
+  }
+]

@@ -1,14 +1,14 @@
-const {listenSupportedEvents}=require('./config')
-
-class KeyEventListener{
-    constructor(hook){
+class IOListener{
+    constructor(hook,supportedEvents){
         this.hook=hook
         this.downList=[]
         this.listners={}
         this.listenedEvents=[]
+        this.supportedEvents=supportedEvents
+        this.hook.start()
     }
-    listen(eName,cb){
-        if(!listenSupportedEvents.includes(eName)){
+    register(eName,cb){
+        if(!this.supportedEvents.includes(eName)){
             throw new Error('Not supported event')
         }
         if(!(eName in this.listners)){
@@ -23,9 +23,12 @@ class KeyEventListener{
                     this.listenKeyUp()
                     break
                 default:
-                    this.listenDefault()
+                    this.listenDefault(eName)
             }
         }
+    }
+    start(){
+        this.hook.start()
     }
     listenKeyDown(){
         this.hook.on('keydown',e=>{
@@ -62,4 +65,4 @@ class KeyEventListener{
         })
     }
 }
-module.exports={KeyEventListener}
+module.exports={IOListener}

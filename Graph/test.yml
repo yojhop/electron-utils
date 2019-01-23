@@ -1,0 +1,17 @@
+type: start
+next:
+  type: statement
+  name: hasOppositePending
+  yes:
+    type: operation
+    name: alertCancelBeforeCover
+    next:
+      type: goto
+      name: testGoto
+  no:
+    type: operation
+    tag: testGoto
+    name: hasOppositeHolding
+    next:
+      type: operation
+      name: final

@@ -69,4 +69,7 @@ function perform(event){
             break
     }
 }
-module.exports={perform}
+function startAll(){
+    robot.go()
+}
+module.exports={perform,startAll}

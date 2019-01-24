@@ -1,5 +1,5 @@
 let {Recorder}=require('./ioRecorder')
-let {perform}=require('./simulator')
+let {perform,startAll}=require('./simulator')
 class Robot{
     constructor(){
         this.recorder=new Recorder()
@@ -17,6 +17,7 @@ class Robot{
         for(let e of this.recorder.getRecords){
             perform(e)
         }
+        startAll()
         console.log('replay ened')
     }
 }

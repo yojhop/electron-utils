@@ -25,7 +25,7 @@ class GraphProcessor{
         if (isPromise(statement)) {
             statement.then(res=>{
                 cb(res)
-            })
+            }).catch(()=>{})
         }
         else cb(statement)
     }
@@ -39,7 +39,7 @@ class GraphProcessor{
             if (isPromise(ret) ) {
                 ret.then(() => {
                     this.processNode( node.next)
-                })
+                }).catch(()=>{})
             } else {
                 this.processNode( node.next)
             }

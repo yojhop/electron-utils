@@ -52,17 +52,21 @@ function testCatchChain(){
         failPrint('catchChain1')
     }).catch(err=>{
         if(i!==0||err!==2) failPrint('catchChain2')
+        i=1
     }).then(res=>{
-        if(res!==undefined) failPrint('catchChain3')
+        if(res!==undefined||i!==1) failPrint('catchChain3')
+        i=2
     }).then(()=>{
         console.log(c)
+        i=3
     }).then(()=>{
         failPrint('catchChain4')
     }).catch(()=>{
+        i=4
     }).catch(()=>{
         failPrint('catchChain5')
     }).then(res=>{
-        if(res!==undefined) failPrint('catchChain6')
+        if(res!==undefined||i!==4) failPrint('catchChain6')
         else succeedPrint('catchChain')
     })
 }

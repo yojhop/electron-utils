@@ -1,4 +1,4 @@
-const {promiseAll}=require('./utils')
+const {promiseAll,promisify}=require('./utils')
 const {Promise}=require('./myPromise')
 
 function testAllResolved(){
@@ -62,5 +62,18 @@ function testError(){
         else console.log('testError failed: not equal 2')
     })
 }
+function testPromisify(){
+    let f=async function(){
+        await new Promise((resolve,reject)=>{
+            setTimeout(()=>{resolve(1)},2000)
+        })
+        return 1
+    }
+    promisify(f).then(res=>{
+        if(res!==1){console.log('testPromisify failed')}
+    })
+    
+}
 testAllResolved()
 testError()
+testPromisify()

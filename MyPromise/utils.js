@@ -13,6 +13,7 @@ function promiseAll(promises){
                 }
             }).catch(err=>{
                 reject(err)
+                console.log('all rejected')
             })
         }
     })

@@ -21,6 +21,17 @@ if (remote) {
     return obj
   })()
 }
+else{
+  guid=(function() {
+    let obj = {}
+    obj.cnt = -1
+    obj.uuid = () => {
+      obj.cnt++
+      return 'main-' + obj.cnt
+    }
+    return obj
+  })()
+}
 let puid= (function() {
   let obj = {}
   obj.cnt = -1

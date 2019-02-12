@@ -72,7 +72,12 @@ function testPromisify(){
     promisify(f).then(res=>{
         if(res!==1){console.log('testPromisify failed')}
     })
-    
+    let immediateFn=function(){
+        return 2
+    }
+    promisify(immediateFn).then(res=>{
+        if(res!==2){console.log('testPromisify failed')}
+    })
 }
 testAllResolved()
 testError()

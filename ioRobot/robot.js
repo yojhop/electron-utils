@@ -14,11 +14,27 @@ class Robot{
     }
     replay(){
         console.log('starting replay')
-        for(let e of this.recorder.getRecords){
-            perform(e)
-        }
-        startAll()
+        this.execute(0)
         console.log('replay ened')
+    }
+    execute(i){
+        let records=this.recorder.getRecords()
+        if(i===records.length-1){
+            startAll()
+            return
+        }
+        if(i-1>=0){
+            let lastTs=records[i-1].ts
+            let curTs=records[i].ts
+            setTimeout(()=>{
+                perform(records[i])
+                this.execute(i+1)
+            },curTs-lastTs)
+        }
+        else{
+            perform(records[i])
+            this.execute(i+1)
+        }
     }
 }
 module.exports={Robot}

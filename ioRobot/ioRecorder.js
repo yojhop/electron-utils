@@ -13,7 +13,6 @@ class Recorder{
         for(let event of listenSupportedEvents){
             this.listener.register(event,e=>{
                 if(this.status==='started'){
-                    console.log(e)
                     this.tryRecord(e)
                 }
             })
@@ -22,6 +21,7 @@ class Recorder{
     }
     stopRecord(){
         this.status='stopped'
+        this.saveToFile()
     }
     getRecords(){
         return this.records
@@ -44,17 +44,23 @@ class Recorder{
         this.lastRecord=e
     }
     tryRecord(e){
-        if(this.lastRecord===null) this.record(e)
+        if(this.lastRecord===null){
+            e.ts=new Date().getTime()
+            this.record(e)
+        }
         else{
             if(this.lastRecord.type===e.type){
                 let nowTime=new Date().getTime()
-                if(nowTime-this.lastRecord.time>=100) this.record(e)
+                if(nowTime-this.lastRecord.time>=100){
+                    e.ts=nowTime
+                    this.record(e)
+                }
             }
             else{
+                e.ts=new Date().getTime()
                 this.record(e)
             }
         }
     }
 }
-let recorder=new Recorder()
-recorder.startRecord()
+module.exports={Recorder}

@@ -1,0 +1,18 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+            <script src='./interpreter.js' ></script>
+            <script>
+                vue={
+                    data:{
+                        items:[1,2,3]
+                    }
+                }
+                interpret(vue)
+            </script>
+    </head>
+    <body>
+        <div v-for='item in items'>
+            <span class='spancls'>b</span>
+        </div>
+    </body>
+</html>

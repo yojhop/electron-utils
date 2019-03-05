@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+            <script src='./index.js' ></script>
+            <script>
+                window.addEventListener('load', ()=> {
+                    let table=document.querySelector('table')
+                    new TableDraggable(table,document)
+                })
+            </script>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <th>时间</th>
+                <th>币对</th>
+            </tr>
+            <tr>
+                <td>2019-03-05</td>
+                <td>btc.usdt</td>
+            </tr>
+        </table>
+    </body>
+</html>

@@ -4,13 +4,13 @@ class TableDraggable{
         let ths=table.querySelectorAll('th')
         
         for(let th of ths){
-            new TableHeaderDraggable(th,doc)
+            new TableHeaderDraggable(doc,th)
         }
     }
 }
 
 class TableHeaderDraggable{
-    constructor(th,doc){
+    constructor(doc,th){
         this.th=th
         this.dragging=false
         this.downX=null
@@ -27,12 +27,12 @@ class TableHeaderDraggable{
             // this.width=this.width+xDiff
             let diffWithLast=e.clientX-this.lastX
             if(diffWithLast>0){
-                this.th.classList.add('expand')
-                this.th.classList.remove('shrink')
+                this.doc.body.classList.add('expand')
+                this.doc.body.classList.remove('shrink')
             }
             else if(diffWithLast<0){
-                this.th.classList.add('shrink')
-                this.th.classList.remove('expand')
+                this.doc.body.classList.add('shrink')
+                this.doc.body.classList.remove('expand')
             }
             this.lastX=e.clientX
         }
@@ -46,25 +46,25 @@ class TableHeaderDraggable{
             console.log('mousedown')
         })
         // 鼠标离开事件mouseleave和鼠标按键放开,设置dragging为false
-        this.th.addEventListener('mouseleave',e=>{
+        this.doc.addEventListener('mouseleave',e=>{
             this.moveEvent(e)
             this.dragging=false
             this.width=this.th.offsetWidth
-            this.th.classList.remove('shrink')
-            this.th.classList.remove('expand')
+            this.doc.body.classList.remove('shrink')
+            this.doc.body.classList.remove('expand')
             console.log('mouseleave')
         })
-        this.th.addEventListener('mouseup',()=>{
+        this.doc.addEventListener('mouseup',()=>{
             this.dragging=false
             this.width=this.th.offsetWidth
-            this.th.classList.remove('shrink')
-            this.th.classList.remove('expand')
+            this.doc.body.classList.remove('shrink')
+            this.doc.body.classList.remove('expand')
             console.log('mouseup')
         })
         // 鼠标移动事件mousemove,如果dragging为true,计算当前位置与鼠标按下x位置的差值，th的宽度=th的宽度+差值
         // 记录为上一个x位置
         // 如果当前位置的x小于上一个x位置，则加入类shrink，删除类expand,如果当前位置的x大于上一个x位置，则删除类shrink,加入类expand
-        this.th.addEventListener('mousemove',e=>{
+        this.doc.addEventListener('mousemove',e=>{
             this.moveEvent(e)
             if(this.dragging) console.log('mousemove')
         })

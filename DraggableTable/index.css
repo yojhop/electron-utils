@@ -1,0 +1,23 @@
+th{
+    -moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
+}
+th:hover{
+    cursor:default
+}
+.shrink:hover{
+    cursor:s-resize
+}
+.expand:hover{
+    cursor:w-resize
+}
+
+.shrink th:hover{
+    cursor:s-resize
+}
+.expand th:hover{
+    cursor:w-resize
+}

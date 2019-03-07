@@ -5,7 +5,6 @@ function interpret(v){
     window.addEventListener('load', function() {
         let inter=new Interpreter(v.data,document.body)
         let newBody=inter.createDomTree()
-        console.log('newbody',newBody)
         document.body=newBody
     })
 }
@@ -47,6 +46,7 @@ class Interpreter{
         this.dataModel=dataModel
         this.root=root
         this.ast=getAst(root)
+        console.log('ast',this.ast)
         this.bindings={}
     }
     createDomTree(node){
@@ -59,7 +59,6 @@ class Interpreter{
     // 对于for节点，传入本节点，复制一份全局变量并且将迭代的数据放入其中，传递给函数
     buildFor(node,model){
         let forNodes=[]
-        debugger
         let sentence=node.data['v-for']
         let parts=sentence.split(' ').filter(item=>item!=='')
         if(parts.length===3&&model[parts[2]]){
@@ -78,6 +77,18 @@ class Interpreter{
         }
         return forNodes
     }
+    buildInnerHtml(innerHtml,data){
+        innerHtml=innerHtml.trim()
+        if(innerHtml.startsWith('{{')&&innerHtml.endsWith('}}')){
+            return getExpressionVal(innerHtml.substring(2,innerHtml.length-2),data)
+        }
+        else{
+            return innerHtml
+        }
+    }
+    // 获得表达式对应的值
+    
+    
     appendChild(domNode,childDoms){
         if(toString.call(childDoms)==='[object Array]'){
             for(let child of childDoms){
@@ -95,8 +106,15 @@ class Interpreter{
         }
         else{
             let el=document.createElement(node.tagName)
-            for(let key in el.data){
-                if(!this.isKeyword(key)) el.set
+            for(let key in node.data){
+                if(!this.isKeyword(key)){
+                    if(key==='innerHTML'){
+                        el.innerHTML=this.buildInnerHtml(node.data[key],data)
+                    }
+                    else{
+                        el.setAttribute(key,node.data[key])
+                    }
+                }
             }
             for(let child of node.children){
                 this.appendChild(el,this.buildNode(child,data))
@@ -104,6 +122,14 @@ class Interpreter{
             return el
         }
     }
+}
+function getExpressionVal(expression,data){
+    for(let key in data){
+        let expr=`var ${key}=data["${key}"]`
+        eval(`var ${key}=data["${key}"]`)
+        // console.log(eval(key))
+    }
+    return eval(expression)
 }
 class Node{
     constructor(children,data,tagName){

@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
             <script src='./interpreter.js' ></script>
+            <script src='./utils.js'></script>
             <script>
                 vue={
                     data:{
@@ -8,6 +9,9 @@
                     }
                 }
                 interpret(vue)
+                setTimeout(()=>{
+                    vue.data.items.shift()
+                },2000)
             </script>
     </head>
     <body>

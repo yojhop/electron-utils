@@ -1,9 +1,10 @@
 function pathMatch(path,start){
-    return path===start||path.startsWith(`${start}_`)
+    return path===start||path.startsWith(`${start}-`)
 }
 function proxy(obj,cb){
     return new Proxy(obj, {
         get: (target, name)=> {
+            console.log('getting',name)
             if (!(name in target)) {
                 return undefined;
             }
@@ -16,6 +17,7 @@ function proxy(obj,cb){
         }
     })
 }
+
 const objType=Object.prototype.toString
 
 function simpleEquals(value1,value2){

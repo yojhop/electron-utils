@@ -5,18 +5,20 @@
             <script>
                 vue={
                     data:{
-                        items:[1,2,3]
+                        items:[['a','b'],[1,2],['c','d']]
                     }
                 }
                 interpret(vue)
                 setTimeout(()=>{
-                    vue.data.items.shift()
+                    vue.data.items[1]=['m','k']
                 },2000)
             </script>
     </head>
     <body>
+        <!-- <div>before</div> -->
         <div v-for='item in items'>
-            <div><span class='spancls'>{{item+1}}</span></div>
+            <span v-for='val in item'>{{val+'|'}}</span>
         </div>
+        <div>after</div>
     </body>
 </html>

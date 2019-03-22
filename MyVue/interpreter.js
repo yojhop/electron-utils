@@ -12,6 +12,9 @@ function interpret(v){
 function copy(obj){
     return JSON.parse(JSON.stringify(obj))
 }
+function getAstPath(node){
+    return node.getAttribute('ast_path')
+}
 function getData(node,path){
     let data={}
     // debugger
@@ -49,7 +52,8 @@ class Interpreter{
     }
     createDomTree(node){
         node=node?node:this.ast
-        return this.buildNode(node,this.dataModel)
+        this.root=this.buildNode(node,this.dataModel)
+        return this.root
     }
     isKeyword(key){
         return ['v-for','v-if','v-show'].includes(key)
@@ -59,10 +63,13 @@ class Interpreter{
         let forNodes=[]
         let sentence=node.data['v-for']
         let parts=sentence.split(' ').filter(item=>item!=='')
+        // debugger
         if(parts.length===3&&model[parts[2]]){
-            let el=document.createElement(node.tagName)
+            
             let datas=model[parts[2]]
             for(let data of datas){
+                let el=document.createElement(node.tagName)
+                // el.setAttribute('ast_path',node.data.ast_path)
                 let modelCopy=copy(model)
                 modelCopy[parts[0]]=data
                 let children=node.children
@@ -70,13 +77,24 @@ class Interpreter{
                     this.appendChild(el,this.buildNode(child,modelCopy))
                     // el.appendChild(this.buildNode(child,modelCopy))
                 }
+                for(let key in node.data){
+                    if(!this.isKeyword(key)){
+                        if(key==='innerHTML'){
+                            el.innerHTML=this.buildInnerHtml(node.data[key],modelCopy)
+                        }
+                        else{
+                            el.setAttribute(key,node.data[key])
+                        }
+                    }
+                }
+                forNodes.push(el)
             }
-            forNodes.push(el)
         }
         return forNodes
     }
     bindVFor(astNode,dataModel,dataName){
         dataModel[dataName]=proxy(dataModel[dataName],()=>{
+            console.log('value changed',dataModel[dataName])
             this.rebuildFor(astNode,dataModel)
         })
     }
@@ -98,9 +116,10 @@ class Interpreter{
     // 重绘某个node,先取得该node的位置，重建好之后将原同一个ast_path的删除，如果后面没有node，则调用appendChild,如果后面有Node，则调用
     // Insertbefore 
     rebuildFor(astNode,data){
-        let position=this.searchPosition(this.root,astNode.ast_path)
+        let position=this.searchPosition(this.root,astNode.data.ast_path)
+        
         if(position){
-            let newNodes=buildNode(astNode,data)
+            let newNodes=this.buildNode(astNode,data)
             for(let node of position.astNodes){
                 position.parent.removeChild(node)
             }
@@ -118,32 +137,36 @@ class Interpreter{
     }
     // 获取定位信息，前一个Node，后一个Node，和parent
     searchPosition(node,ast_path){
-        if(node.ast_path!==ast_path){
-            if(pathMatch(ast_path,node.ast_path)){
+        let nodePath=getAstPath(node)
+        // debugger
+        if(nodePath!==ast_path){
+            if(pathMatch(ast_path,nodePath)){
                 for(let child of node.children){
-                    if(pathMatch(ast_path,child.ast_path)) return searchPosition(child,ast_path)
+                    let childPath=getAstPath(child)
+                    if(pathMatch(ast_path,childPath)) return this.searchPosition(child,ast_path)
                 }
                 return null
             }
             return null
         }
         else{
-            return this.getPosition(node)
+            return this.getPosition(node,ast_path)
         }
     }
     getPreviousAstNode(node,ast_path){
         node=node.previousElementSibling
         let astNodeList=[]
-        while(node!==null&&node.ast_path===ast_path){
+        while(node!==null&&getAstPath(node)===ast_path){
             astNodeList.push(node)
             node=node.previousElementSibling
         }
         return {prevNode:node,astNodeList}
     }
+    
     getNextAstNode(node,ast_path){
         node=node.nextElementSibling
         let astNodeList=[]
-        while(node!==null&&node.ast_path===ast_path){
+        while(node!==null&&getAstPath(node)===ast_path){
             astNodeList.push(node)
             node=node.nextElementSibling
         }
@@ -162,6 +185,7 @@ class Interpreter{
         position.astNodes=astNodes
         position.prevNode=prevData.prevNode
         position.nextNode=nextData.nextNode
+        return position
     }
     appendChild(domNode,childDoms){
         if(toString.call(childDoms)==='[object Array]'){
@@ -184,6 +208,7 @@ class Interpreter{
         }
         else{
             let el=document.createElement(node.tagName)
+            // debugger
             for(let key in node.data){
                 if(!this.isKeyword(key)){
                     if(key==='innerHTML'){
@@ -207,9 +232,6 @@ function getExpressionVal(expression,data){
         // console.log(eval(key))
     }
     return eval(expression)
-}
-function pathMatch(path,start){
-    return path===start||path.startsWith(`${start}_`)
 }
 class Node{
     constructor(children,data,tagName){

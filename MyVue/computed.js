@@ -9,7 +9,16 @@ k=function(){
 for(let i=0;i<10000;i++){
     getBindList(k)
 }
+class ComputedBind{
 
+}
+function bindAll(vue){
+    for(let name of vue.computed){
+        let fn=vue.computed[name]
+        vue[name]=fn()
+        let bindList=getBindList(fn)
+    }
+}
 function getBindList(f){
     let dependendList=[]
     // myVueCtx=proxy({},dependendList)

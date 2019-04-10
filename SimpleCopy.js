@@ -26,6 +26,7 @@ function simpleCopy(data){
 
 function stackCopy(obj){
     let stack=new Stack()
+    if(!objHasChild(obj)) return obj
     let ret=getInitObj(obj)
     stack.push({curIndex:0,object:obj,indexInParent:null,copyObj:ret})
     while(true){
@@ -54,52 +55,29 @@ function stackCopy(obj){
                     if(newTop) newTop.curIndex=top.indexInParent+1
                     else break
                 }
-                
-        }
-    }
-    return ret
-}
-class StockCopy{
-    constructor(obj){
-        this.stack=new Stack()
-        this.ret=getInitObj(obj)
-        this.stack.push({curIndex:0,object:obj,indexInParent:null,copyObj:this.ret})
-    }
-    startCopy(){
-        let needProcess=this.processTop()
-        while(needProcess){
-            needProcess=this.processTop()
-        }
-    }
-    processTop(){
-        let top=this.stack.top()
-        if(top===undefined) return false
-        let type=getType(top.object)
-        switch(type){
-            case 'Object':
-                let keys=Object.keys(top.object).sort((a,b)=>a.localeCompare(b))
-                if(top.curIndex<keys.length){
-                    let key=keys[top.curIndex]
-                    let subObj=top.object[key]
+                break
+            case 'Array':
+                if(top.curIndex<top.object.length){
+                    let subObj=top.object[top.curIndex]
                     if(objHasChild(subObj)){
                         let copyObj=getInitObj(subObj)
-                        top.copyObj[key]=copyObj
-                        this.stack.push({curIndex:0,object:subObj,indexInParent:top.curIndex,copyObj})
+                        top.copyObj[top.curIndex]=copyObj
+                        stack.push({curIndex:0,object:subObj,indexInParent:top.curIndex,copyObj})
                     }
                     else{
-                        top.copyObj[key]=subObj
+                        top.copyObj[top.curIndex]=subObj
                         top.curIndex++
                     }
                 }
                 else{
-                    this.stack.pop()
-                    let newTop=this.stack.top()
+                    stack.pop()
+                    let newTop=stack.top()
                     if(newTop) newTop.curIndex=top.indexInParent+1
                 }
-                
+                break
         }
-        return true
     }
+    return ret
 }
 function objHasChild(obj){
     let type=getType(obj)

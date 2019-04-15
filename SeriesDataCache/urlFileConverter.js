@@ -1,5 +1,6 @@
 const filtouts=['since','until']
 const moment=require('moment')
+const fs=require('fs')
 function filtHost(url){
     if(url.startsWith('http://')){
         let startInd=url.indexOf('/',7)
@@ -30,23 +31,23 @@ function getFilesList(url){
         
         url=`${url}${eqs.join('%26')}`
     }
+	//console.log('getting dates',since,until,url)
     let dates=getDates(since,until)
+	//console.log(dates)
     let files=[]
-    for(let date of dates) files.push(`${url}-${date}`)
+    for(let date of dates) files.push({filePath:`${url}-${date.date}`,since:date.since,until:date.until})
     return files
 }
 function getSearchingTs(since,until){
     if(isNaN(since)) return []
     until=isNaN(until)?new Date().getTime():until
     let daySpan=24*3600*1000
-    // let start=Math.floor(since/daySpan)*daySpan
     let searchingTs=[]
     let dateStart=Math.floor(since/daySpan)*daySpan
     let start=since
     // debugger
     while(dateStart<until){
         let curDate=moment(dateStart).format('YYYY-MM-DD')
-        // let curDate=new Date(dateStart)
         let dateEnd=dateStart+daySpan
         let end=dateEnd>until?until:dateEnd
         if(end>start) searchingTs.push({date:curDate,start,end})
@@ -59,12 +60,30 @@ function getSearchingTs(since,until){
 function getDates(since,until){
     if(!since) return []
     until=until?until:new Date().getTime()
-    let daySpan=24*3600%1000
+    let daySpan=24*3600*1000
     let start=Math.floor(since/daySpan)*daySpan
     let dates=[]
     while(start<until){
-        dates.push(moment(start).format('YYYY-MM-DD'))
+		let begin=start>=since?start:since
+		let end=start+daySpan
+		end=end<=until?end:until
+        dates.push({date:moment(start).format('YYYY-MM-DD'),since:begin,until:end})
         start+=daySpan
     }
     return dates
 }
+function getFileContent(filePath){
+    if(fs.existsSync(filePath)) return fs.readFileSync(filePath,'utf8')
+    return ''
+}
+function mergeDatas(){
+
+}
+let fileItems=getFilesList('/api/v1/zhubi?since=19000029100&until=19000029300&source=t0')
+for(let item of fileItems){
+    let content=getFileContent(item.filePath)
+    if(content!==''){
+        
+    }
+}
+// console.log(getFilesList('/api/v1/zhubi?since=19000029100&until=19000029300&source=t0'))

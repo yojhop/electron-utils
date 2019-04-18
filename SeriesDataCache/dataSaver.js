@@ -72,6 +72,6 @@ function processMassBlock(massBlock){
     massBlock.datas=newDatas
 }
 // let oldBlocks=[{since:100,until:300,datas:[{ts:100},{ts:150},{ts:200}]},{since:400,until:500,datas:[{ts:4100},{ts:450},{ts:4700}]}]
-// let newBlocks=[{since:50,until:350,datas:[{ts:100},{ts:180}]}]
+// let newBlocks=[{since:50,until:350,datas:[{ts:100},{ts:180}]}] 
 // console.log(mergeBlocks(newBlocks,oldBlocks))
 module.exports={saveDatas}

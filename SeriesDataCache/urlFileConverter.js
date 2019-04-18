@@ -76,9 +76,7 @@ function getFileContent(filePath){
     if(fs.existsSync(filePath)) return fs.readFileSync(filePath,'utf8')
     return ''
 }
-function mergeDatas(){
 
-}
 let fileItems=getFilesList('/api/v1/zhubi?since=19000029100&until=19000029300&source=t0')
 for(let item of fileItems){
     let content=getFileContent(item.filePath)
@@ -87,3 +85,4 @@ for(let item of fileItems){
     }
 }
 // console.log(getFilesList('/api/v1/zhubi?since=19000029100&until=19000029300&source=t0'))
+module.exports={getFilesList}

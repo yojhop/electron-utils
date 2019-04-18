@@ -69,4 +69,4 @@ function arrayEquals(arr1,arr2){
     }
     return true
 }
-module.exports= { simpleEquals }
+module.exports= simpleEquals 

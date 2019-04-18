@@ -45,7 +45,7 @@ function getFileBlocks(filePath){
     }
     return []
 }
-function getDatas(blocks,since,until,fileLines){
+function getDatas(blocks,since,until,fileLines){ 
     let points=[]
     points.push({marker:'since',ts:since})
     points.push({marker:'until',ts:until})
@@ -53,7 +53,33 @@ function getDatas(blocks,since,until,fileLines){
         points.push({marker:'begin',ts:block.since,lineNum:block.lineStart})
         points.push({marker:'end',ts:block.until,lineNum:block.lineEnd})
     }
-    points.sort((a,b)=>a.ts-b.ts)
+    points.sort((a,b)=>{
+        if(a.ts>b.ts){
+            return 1
+        }
+        else if(a.ts<b.ts){
+            return -1
+        }
+        else{
+            if(a.marker==='since'){
+                if(b.marker==='until'){
+                    return -1
+                }
+                else{
+                    return 1
+                }
+            }
+            else if(a.markder==='until'){
+                if(b.marker==='since'){
+                    return 1
+                }
+                else{
+                    return -1
+                }
+            }
+            return 0
+        }
+    })
     let begin=false
     let datas=[]
     for(let i=0;i<points.length;i++){

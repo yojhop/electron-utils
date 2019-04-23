@@ -5,6 +5,7 @@ function getFileDatas(filePath,since,until){
         let lines=content.split('\n')
         if(lines.length>1){
             let blocks=JSON.parse(lines[0])
+            // console.log('getting datas',blocks,since,until,lines)
             return getDatas(blocks,since,until,lines)
         }
     }
@@ -62,24 +63,29 @@ function getDatas(blocks,since,until,fileLines){
         }
         else{
             if(a.marker==='since'){
-                if(b.marker==='until'){
-                    return -1
-                }
-                else{
-                    return 1
-                }
+                return -1
             }
-            else if(a.markder==='until'){
-                if(b.marker==='since'){
-                    return 1
-                }
-                else{
-                    return -1
-                }
+            else if(a.marker==='until'){
+                return 1
+            }
+            else if(b.marker==='since'){
+                return 1
+            }
+            else if(b.marker==='until'){
+                return -1
             }
             return 0
         }
     })
+    let newPoints=[]
+    for(let point of points){
+        let item={}
+        for(let key in point){
+            if(key!=='cachedDatas') item[key]=point[key]
+        }
+        newPoints.push(item)
+    }
+    console.log('points',newPoints)
     let begin=false
     let datas=[]
     for(let i=0;i<points.length;i++){
@@ -95,10 +101,10 @@ function getDatas(blocks,since,until,fileLines){
                     switch(nextPoint.marker){
                         case 'begin':
                         case 'until':
-                            datas.push({start:point.ts,end:nextPoint.ts,cached:false})
+                            datas.push({since:point.ts,until:nextPoint.ts,cached:false})
                             break
                         case 'end':
-                            let dataItem={start:point.ts,end:nextPoint.ts,cached:true}
+                            let dataItem={since:point.ts,until:nextPoint.ts,cached:true}
                             let nextPLineNum=nextPoint.lineNum
                             let lineData=lineToData(fileLines[nextPLineNum])
                             let cachedDatas=[]
@@ -116,13 +122,13 @@ function getDatas(blocks,since,until,fileLines){
             case 'end':
                 nextPoint=points[i+1]
                 if(nextPoint){
-                    datas.push({start:point.ts,end:nextPoint.ts,cached:false})
+                    datas.push({since:point.ts,until:nextPoint.ts,cached:false})
                 }
                 break
             case 'begin':
                 nextPoint=points[i+1]
                 if(nextPoint){
-                    let dataItem={start:point.ts,end:nextPoint.ts,cached:true}
+                    let dataItem={since:point.ts,until:nextPoint.ts,cached:true}
                     let nextPLineNum=nextPoint.lineNum
                     let cachedDatas=[]
                     for(let i=point.lineNum;i<=nextPLineNum;i++){
@@ -135,9 +141,41 @@ function getDatas(blocks,since,until,fileLines){
                 break
         }
     }
+    filtoutDatas(datas)
     return datas
+}
+// 对于任意节点，如果开始时间与结束时间一样，并且cached为false，
+// 检查前一个节点，如果前一节点结束时间与当前节点时间一样，标记当前节点为删除
+
+// 否则，检查后一节点，如果后一节点开始时间与当前节点时间一样，标记当前节点为删除
+
+
+function filtoutDatas(datas){
+    let toRemove=[]
+    for(let i=0;i<datas.length;i++){
+        let data=datas[i]
+        if(data.since===data.until&&data.cached===false){
+            let prevData=datas[i-1]
+            if(prevData&&prevData.until===data.since){
+                toRemove.push(i)
+                continue
+            }
+            let nextData=datas[i+1]
+            if(nextData&&nextData.since===data.until){
+                toRemove.push(i)
+                continue
+            }
+        }
+    }
+    let len=toRemove.length
+    
+    while(len--){
+        // console.log('removing',toRemove[len])
+        datas.splice(toRemove[len],1)
+    }
 }
 function lineToData(line){
     return JSON.parse(line)
 }
+// console.log(getFileDatas('%2Fapi%2Fquote%2Ftick%3Fa%0contract%3Dbtc.usdt-1970-01-01' ,500000, 6000000))
 module.exports={getFileDatas,getFileBlocks}

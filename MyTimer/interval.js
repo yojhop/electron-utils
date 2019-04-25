@@ -15,9 +15,8 @@ function checkInterval(cb,id,nextTs,interval){
         if(nowTs>=nextTs){
             nextTs=nextTs+interval
             cb()
-            checkInterval(cb,id,nextTs,interval)
         }
-        else checkInterval(cb,id,nextTs,interval)
+        checkInterval(cb,id,nextTs,interval)
     })
 }
 function clearInterval(id){

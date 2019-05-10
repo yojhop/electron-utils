@@ -37,7 +37,7 @@ function getAst(node,path){
         let childPath=`${path}-${nodeChildren[index].tagName}${index}`
         children.push(getAst(nodeChildren[index],childPath))
     }
-
+    
     // debugger
     
     return new Node(children,getData(node,path),node.tagName)

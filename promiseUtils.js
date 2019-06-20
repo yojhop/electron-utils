@@ -2,20 +2,18 @@ export function tryAll(promises) {
   const succs = []
   const fails = []
   return new Promise((resolve, reject) => {
-    const walkFn = (i) => {
-      if (i < promises.length) {
-        promises[i].then(res => {
-          succs.push(res)
-          walkFn(++i)
-        }).catch(err => {
-          fails.push(err)
-          walkFn(++i)
-        })
-      } else {
-        resolve({ succs, fails })
-      }
+    for (let promise of promises) {
+      // console.log('processing', promise)
+      promise.then(res => {
+        succs.push(res)
+        // console.log('succeedd')
+        if (succs.length + fails.length === promises.length) resolve({ succs, fails })
+      }).catch(err => {
+        fails.push(err)
+        // console.log('failed')
+        if (succs.length + fails.length === promises.length) resolve({ succs, fails })
+      })
     }
-    walkFn(0)
   })
 }
 export function tryPromise({fn,maxTry,interval}){
